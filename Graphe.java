@@ -2,9 +2,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 public class Graphe {
-	private int[][] poids;
-	private int nbville;
-	private ArrayList<String> ville;
+	public int[][] poids;
+	public int nbville;
+	public ArrayList<String> ville;
 	private int eqinf=0;
 	public Graphe() {
 		Scanner sc = new Scanner(System.in);
@@ -44,14 +44,7 @@ public class Graphe {
 			poids[i][i]=0;
 		}
 		
-	//	LinkedList<State> a=A_star();
-	//	int tot=0;
-	//	for(int i=0;i<nbville-1;i++) {
-		//	System.out.println(a.get(i).ville);
-		//	tot=tot+poids[a.get(i).ville][a.get(i+1).ville];
-		//}
-		//System.out.println(a.get(nbville-1).ville);
-		//System.out.println(tot+poids[a.get(nbville-1).ville][a.get(0).ville]);
+
 	}
 	
 	private void GrapheRandom() {
@@ -78,70 +71,76 @@ public class Graphe {
 		for(int i=0;i<nbville;i++) {
 			poids[i][i]=0;
 		}
-		
-		//LinkedList<State> a=A_star();
-		//int tot=0;
-		//for(int i=0;i<nbville-1;i++) {
-		//	System.out.println(a.get(i).ville);
-		//	tot=tot+poids[a.get(i).ville][a.get(i+1).ville];
-		//}
-	//	System.out.println(a.get(nbville-1).ville);
-		//System.out.println(tot+poids[a.get(nbville-1).ville][a.get(0).ville]);
+		System.out.println("on est la");
 	}
 	
 	public LinkedList<State> A_star(){
 		equivalentinfini();
-		State racine=new State(0,0,0);
+		
 		LinkedList<State>  explored=new LinkedList<State>();
 		LinkedList<State> frontier=new LinkedList<State>();
 		ArrayList<Integer> unexplored=new ArrayList<Integer>();
 		for(int i=0;i<nbville;i++) {
 			unexplored.add(i);
 		}
+		State racine=new State(0,0,0,unexplored,explored);
 		//frontier.add(racine);
-			
-			for(int i=1;i<unexplored.size();i++) {
-				int [] MST=prim(unexplored,unexplored.get(i));
-				frontier.add(new State(unexplored.get(i),racine.cout+poids[racine.ville][unexplored.get(i)],heuristique(MST,unexplored.get(i),unexplored)));
+		racine.unexplored.remove(0);
+		racine.explored.add(racine);
+			for(int i=0;i<racine.unexplored.size();i++) {
+				int [] MST=prim(racine.unexplored,racine.unexplored.get(i));
+				frontier.add(new State(racine.unexplored.get(i),racine.cout+poids[racine.ville][racine.unexplored.get(i)],heuristique(MST,racine.unexplored.get(i),racine.unexplored),racine.unexplored,racine.explored));
 			}
-			explored.add(racine);
-			unexplored.remove(0);
-			while(frontier.size()!=0) {
+			int a=choice(frontier);
+			State racine2=frontier.get(a);
+			while(racine2.unexplored.size()!=0||frontier.size()!=0) {
+				//for(int k=0;k<frontier.size();k++) {
+				//	System.out.println("ville "+frontier.get(k).ville +" explored "+frontier.get(k).explored.size() +" unexplored "+frontier.get(k).unexplored.size()+" cout+heuristique "+frontier.get(k).cout+" "+frontier.get(k).heuristique);
+				//}
+				racine2.explored.add(racine2);
+				System.out.println("taille frontiere "+frontier.size());
 				
-				int a=choice(frontier);
-				State racine2=frontier.get(a);
-				System.out.println("choix"+racine2.ville);
+				if(frontier.size()==0) {
+					break;
+				}
 				frontier.remove(a);
-				for(int i=0;i<unexplored.size();i++) {
-					if(racine2.ville==unexplored.get(i)) {
-						unexplored.remove(i);
+				for(int i=0;i<racine2.unexplored.size();i++) {
+					if(racine2.ville==racine2.unexplored.get(i)) {
+						
+						racine2.unexplored.remove(i);
 						break;
 					}
 				}
-				for(int i=0;i<unexplored.size();i++) {
-					int [] MST2=prim(unexplored,unexplored.get(i));
-					State t=new State(unexplored.get(i),racine2.cout+poids[racine2.ville][unexplored.get(i)],heuristique(MST2,unexplored.get(i),unexplored));
-					int pred=t.cout+t.heuristique;
-					System.out.println("ville "+t.ville+" cout "+t.cout+" heur "+t.heuristique);
-					for(int j=0;j<frontier.size();j++) {
-						if(frontier.get(j).ville==t.ville) {
-							if(t.cout<(frontier.get(j).cout)) {
-								frontier.remove(j);
-								frontier.add(t);
-								break;
-							}
+				if(racine2.unexplored.size()==0) {
+					for(int h=0;h<frontier.size();h++) {
+						if(racine2.cout>frontier.get(h).cout+frontier.get(h).heuristique) {
+							break;
+						}
+						if(h==frontier.size()-1) {
+							return racine2.explored;
 						}
 					}
+				}
+				for(int i=0;i<racine2.unexplored.size();i++) {
+					int [] MST2=prim(racine2.unexplored,racine2.unexplored.get(i));
+					State t=new State(racine2.unexplored.get(i),racine2.cout+poids[racine2.ville][racine2.unexplored.get(i)],heuristique(MST2,racine2.unexplored.get(i),racine2.unexplored),racine2.unexplored,racine2.explored);
+					int pred=t.cout+t.heuristique;
+					
+
+								frontier.add(t);
+
 					
 				}
-				explored.add(racine2);
 
+				
+				if(frontier.size()!=0) {
+					a=choice(frontier);
+					racine2=frontier.get(a);
+				}
+				
 			}
-		//int [] MST=prim();
-		//for(int i=0;i<MST.length;i++) {
-		//	System.out.println(i+"-"+MST[i]);
-		//}
-			return explored;
+
+			return racine2.explored;
 	}
 	
 	public int[] prim(ArrayList<Integer> unexplored,int racine){
@@ -169,9 +168,9 @@ public class Graphe {
 				}
 			}
 		}
-		for(int i=0;i<nbville;i++) {
-			System.out.println(pred[i]);
-		}
+		//for(int i=0;i<nbville;i++) {
+		//	System.out.println(pred[i]);
+//		}
 		
 		return pred;
 	}
@@ -203,15 +202,15 @@ public class Graphe {
 		for(int i=0;i<nbville;i++) {
 			if(mst[i]!=-1) {
 				h=h+poids[i][mst[i]];
-				if(poids[i][noeudAct]<h2) {
+				if(poids[i][0]<h2) {
 					nb=i;
-					h2=poids[i][noeudAct];
+					h2=poids[i][0];
 					
 				}
 			}
 		}
 		//if(nb!=0) {h2=h2/nb;}
-		//System.out.println(h2);
+		//System.out.println("h2 "+h2+" point "+nb);
 		return h+h2;//+poids[0][noeudAct];
 		
 	}
