@@ -5,6 +5,7 @@ public class Graphe {
 	public int[][] poids;
 	public int nbville;
 	public ArrayList<String> ville;
+	LinkedList<State> frontier=new LinkedList<State>();
 	private int eqinf=0;
 	public Graphe() {
 		Scanner sc = new Scanner(System.in);
@@ -76,9 +77,9 @@ public class Graphe {
 	
 	public LinkedList<State> A_star(){
 		equivalentinfini();
-		
+		int min_tour=eqinf;
 		LinkedList<State>  explored=new LinkedList<State>();
-		LinkedList<State> frontier=new LinkedList<State>();
+		
 		ArrayList<Integer> unexplored=new ArrayList<Integer>();
 		for(int i=0;i<nbville;i++) {
 			unexplored.add(i);
@@ -99,7 +100,7 @@ public class Graphe {
 				//}
 				racine2.explored.add(racine2);
 				System.out.println("taille frontiere "+frontier.size());
-				
+				System.out.println(racine2.explored.size());
 				if(frontier.size()==0) {
 					break;
 				}
@@ -112,11 +113,16 @@ public class Graphe {
 					}
 				}
 				if(racine2.unexplored.size()==0) {
+					if(racine2.cout+racine2.heuristique<min_tour) {
+						min_tour=racine2.cout+racine2.heuristique;
+						System.out.println("tour minimal: "+min_tour);
+					}
 					for(int h=0;h<frontier.size();h++) {
-						if(racine2.cout>frontier.get(h).cout+frontier.get(h).heuristique) {
+						if(racine2.cout+racine2.heuristique>frontier.get(h).cout+frontier.get(h).heuristique) {
 							break;
 						}
 						if(h==frontier.size()-1) {
+							System.out.println(racine2.cout+racine2.heuristique);
 							return racine2.explored;
 						}
 					}
@@ -126,10 +132,11 @@ public class Graphe {
 					State t=new State(racine2.unexplored.get(i),racine2.cout+poids[racine2.ville][racine2.unexplored.get(i)],heuristique(MST2,racine2.unexplored.get(i),racine2.unexplored),racine2.unexplored,racine2.explored);
 					int pred=t.cout+t.heuristique;
 					
-
-								frontier.add(t);
-
-					
+					if(t.cout+t.heuristique<min_tour) {
+						if(add(frontier,t)==1) {
+						frontier.add(t);
+						}
+					}
 				}
 
 				
@@ -139,7 +146,7 @@ public class Graphe {
 				}
 				
 			}
-
+			System.out.println(racine2.cout);
 			return racine2.explored;
 	}
 	
@@ -223,5 +230,34 @@ public class Graphe {
 		}
 		
 		return choix;
+	}
+	
+	public int add(LinkedList<State> frontier,State t) {
+		int ret=1;
+		for(int i=0;i<frontier.size();i++) {
+			if(t.ville==frontier.get(i).ville) {
+				int s=0;
+				for(int j=0;j<t.unexplored.size();j++) {
+					boolean a=frontier.get(i).unexplored.contains(t.unexplored.get((j)));
+					if(a==true) {
+						s=s+1;
+					}
+					else {
+						break;
+					}
+				}
+				if(s==t.unexplored.size()) {
+					if(t.cout>frontier.get(i).cout) {
+						ret=0;
+					}
+					else {
+						frontier.remove(i);
+						i--;
+					}
+				}
+			}
+		}
+		
+		return ret;
 	}
 }
