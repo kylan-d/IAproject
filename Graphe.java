@@ -246,14 +246,11 @@ public class Graphe {
 						break;
 					}
 				}
-				if(s==t.unexplored.size()) {
-					if(t.cout>frontier.get(i).cout) {
+				if(s==t.unexplored.size()&&t.explored.size()==frontier.get(i).explored.size()) {
+					if(t.cout+t.heuristique>=frontier.get(i).cout) {
 						ret=0;
 					}
-					else {
-						frontier.remove(i);
-						i--;
-					}
+
 				}
 			}
 		}
