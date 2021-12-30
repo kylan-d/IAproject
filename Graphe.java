@@ -9,7 +9,7 @@ public class Graphe {
 	private int eqinf=0;
 	public Graphe() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("-tapez 1 pour un graphe que vous g√©n√©rez \n-tapez 2 pour un graphe g√©n√©rer al√©atoirement \n-tapez autre chose pour quitter");
+		System.out.println("-tapez 1 pour un graphe que vous g®¶n®¶rez \n-tapez 2 pour un graphe g®¶n®¶rer al®¶atoirement \n-tapez autre chose pour quitter");
 		int choix=sc.nextInt();
 		if(choix==1) {
 			this.Graphemain();
@@ -50,7 +50,7 @@ public class Graphe {
 	
 	private void GrapheRandom() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("combien de ville voulez vous g√©n√©rer?");
+		System.out.println("combien de ville voulez vous g®¶n®¶rer?");
 		nbville =sc.nextInt();
 		System.out.println("Quel poids/distance maximale voulez vous entre deux villes?");
 		int maxpoids =sc.nextInt();
@@ -256,5 +256,81 @@ public class Graphe {
 		}
 		
 		return ret;
+	}
+	
+/***
+ * 	Simulated annealing	
+ */
+	private ArrayList<String> previousTravel = new ArrayList<>();
+
+
+	public ArrayList<String> swapCities() {
+	    int a = generateRandomIndex();
+	    int b = generateRandomIndex();
+	    previousTravel = ville;
+	    ArrayList<String> ville2=(ArrayList<String>) ville.clone();
+	    String x = ville2.get(a);
+	    String y = ville2.get(b);
+	    ville2.set(a, y);
+	    ville2.set(b, x);
+	    return ville2;
+	}
+
+	public void revertSwap() {
+	    ville = previousTravel;
+	}
+	private int generateRandomIndex() {
+	    return (int) (Math.random() * ville.size());
+	}
+	public String getVille(int index) {
+	    return ville.get(index);
+	}
+
+	public int getDistance(ArrayList<String> ville2) {
+		
+		int distance = 0;
+	    for (int index = 0; index < ville2.size()-1; index++) {
+	        distance += poids[ville.indexOf(ville2.get(index))][ville.indexOf(ville2.get(index+1))];
+	    }
+	    distance += poids[ville.indexOf(ville2.get(ville2.size()-1))][0];
+	    return distance;
+	}
+	public double simulateAnnealing(double startingTemperature, int numberOfIterations, double coolingRate) {
+	    System.out.println("Starting SA with temperature: " + startingTemperature + ", # of iterations: " + numberOfIterations + " and colling rate: " + coolingRate);
+	    double t = startingTemperature;
+	    //ville.generateInitialTravel();
+	    double bestDistance = getDistance(ville);
+	    System.out.println("Initial distance of travel: " + bestDistance);
+	    double bestSolution = bestDistance;
+	    double currentSolution = bestSolution;
+	    double taux=0;
+	    for (int i = 0; i < numberOfIterations; i++) {
+	        if (t > 0.1) {
+	            ArrayList<String> newVille = swapCities();
+	            double currentDistance = getDistance(newVille);
+	            System.out.println("Iteration #" + i);
+	            System.out.println("Distance actuel : "+ currentDistance);
+	            if (currentDistance < bestDistance) {
+	            	taux = (bestDistance-currentDistance)/bestDistance;
+	                bestDistance = currentDistance;
+	            } else if (Math.exp((bestDistance - currentDistance) / t) < Math.random()) {
+	                revertSwap();
+	            }
+	            t *= coolingRate;
+	            
+	            for(int j=0;j<newVille.size();j++)
+            	{
+            		System.out.print(newVille.get(j)+"->");
+            		
+            	}
+	            System.out.println(newVille.get(0));
+	            //System.out.println();
+	        } else {
+	            continue;
+	        }
+	     
+	    }
+	    System.out.println("La taux d°Øam®¶lioration = "+(taux*100)+"%");
+	    return bestDistance;
 	}
 }

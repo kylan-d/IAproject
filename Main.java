@@ -4,7 +4,10 @@ public class Main {
 	public static void main (String[] args) throws InterruptedException {
 	Graphe G=new Graphe();
 	System.out.println("la");
+	System.out.println("*****A* Algo******");
 	LinkedList<State> a=G.A_star();
+	
+	
 	System.out.println("la2");
 	int tot=0;
 	String parcours="";
@@ -16,5 +19,9 @@ public class Main {
 	System.out.println(parcours+"-"+G.ville.get(0));
 	tot=tot+G.poids[a.get(G.nbville-1).ville][a.get(0).ville];
 	System.out.println("poids total du circuit minimal: "+tot);
+	
+	System.out.println("*****Simulated Annealing******");
+	double b = G.simulateAnnealing(100,20,5);
+	System.out.println("Poids totoal apr¨¨s am¨¦lioration par Simulated Annealing : "+b);
 }
 }
