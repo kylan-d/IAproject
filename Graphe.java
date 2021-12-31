@@ -48,6 +48,7 @@ public class Graphe {
 
 	}
 	
+	
 	private void GrapheRandom() {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("combien de ville voulez vous g¨¦n¨¦rer?");
@@ -301,8 +302,7 @@ public class Graphe {
 	    //ville.generateInitialTravel();
 	    double bestDistance = getDistance(ville);
 	    System.out.println("Initial distance of travel: " + bestDistance);
-	    double bestSolution = bestDistance;
-	    double currentSolution = bestSolution;
+	 
 	    double taux=0;
 	    for (int i = 0; i < numberOfIterations; i++) {
 	        if (t > 0.1) {
@@ -333,4 +333,18 @@ public class Graphe {
 	    System.out.println("La taux d¡¯am¨¦lioration = "+(taux*100)+"%");
 	    return bestDistance;
 	}
+	public void afficherA(int nb,LinkedList<State> a)
+	{
+		int tot=0;
+		String parcours="";
+		for(int i=0;i<nb-1;i++) {
+			parcours=parcours+"-"+ville.get(a.get(i).ville);
+			tot=tot+this.poids[a.get(i).ville][a.get(i+1).ville];
+		}
+		parcours=parcours+"-"+ville.get(a.get(nb-1).ville);
+		System.out.println(parcours+"-"+ville.get(0));
+		tot=tot+this.poids[a.get(nbville-1).ville][a.get(0).ville];
+		System.out.println("poids total du circuit minimal: "+tot);
+	}
+	
 }
