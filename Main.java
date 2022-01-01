@@ -33,16 +33,6 @@ public class Main {
 		{
 			System.out.println("*****A* Algo******");
 			a=G.A_star();
-			/**int tot=0;
-			String parcours="";
-			for(int i=0;i<G.nbville-1;i++) {
-				parcours=parcours+"-"+G.ville.get(a.get(i).ville);
-				tot=tot+G.poids[a.get(i).ville][a.get(i+1).ville];
-			}
-			parcours=parcours+"-"+G.ville.get(a.get(G.nbville-1).ville);
-			System.out.println(parcours+"-"+G.ville.get(0));
-			tot=tot+G.poids[a.get(G.nbville-1).ville][a.get(0).ville];
-			System.out.println("poids total du circuit minimal: "+tot);**/
 			G.afficherA(G.nbville,a);
 		}
 		}
