@@ -293,7 +293,7 @@ public class Graphe {
 	    for (int index = 0; index < ville2.size()-1; index++) {
 	        distance += poids[ville.indexOf(ville2.get(index))][ville.indexOf(ville2.get(index+1))];
 	    }
-	    distance += poids[ville.indexOf(ville2.get(ville2.size()-1))][0];
+	    distance += poids[ville.indexOf(ville2.get(ville2.size()-1))][ville.indexOf(ville2.get(0))];
 	    return distance;
 	}
 	public double simulateAnnealing(double startingTemperature, int numberOfIterations, double coolingRate) {
