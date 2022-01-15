@@ -9,7 +9,7 @@ public class Graphe {
 	private int eqinf=0;
 	public Graphe() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("-tapez 1 pour un graphe que vous g®¶n®¶rez \n-tapez 2 pour un graphe g®¶n®¶rer al®¶atoirement \n-tapez autre chose pour quitter");
+		System.out.println("-tapez 1 pour un graphe que vous g√©n√©rez \n-tapez 2 pour un graphe g√©n√©rer al√©atoirement \n-tapez autre chose pour quitter");
 		int choix=sc.nextInt();
 		if(choix==1) {
 			this.Graphemain();
@@ -51,7 +51,7 @@ public class Graphe {
 	
 	private void GrapheRandom() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("combien de ville voulez vous g®¶n®¶rer?");
+		System.out.println("combien de ville voulez vous g√©n√©rer?");
 		nbville =sc.nextInt();
 		System.out.println("Quel poids/distance maximale voulez vous entre deux villes?");
 		int maxpoids =sc.nextInt();
@@ -65,7 +65,7 @@ public class Graphe {
 		for(int i=0;i<nbville;i++) {
 			for(int j=nbville-1;j>i;j--) {
 				int distance=1 + (int)(Math.random() * ((maxpoids-1) + 1));
-				System.out.println(distance);
+				System.out.println("distance de "+distance+" entre "+ville.get(i)+" et "+ville.get(j));
 				poids[i][j]=distance;
 				poids[j][i]=distance;
 			}
@@ -73,11 +73,12 @@ public class Graphe {
 		for(int i=0;i<nbville;i++) {
 			poids[i][i]=0;
 		}
-		System.out.println("on est la");
 	}
+	
 	
 	public LinkedList<State> A_star(){
 		equivalentinfini();
+		int tailleMax=0;
 		int min_tour=eqinf;
 		LinkedList<State>  explored=new LinkedList<State>();
 		
@@ -100,8 +101,10 @@ public class Graphe {
 				//	System.out.println("ville "+frontier.get(k).ville +" explored "+frontier.get(k).explored.size() +" unexplored "+frontier.get(k).unexplored.size()+" cout+heuristique "+frontier.get(k).cout+" "+frontier.get(k).heuristique);
 				//}
 				racine2.explored.add(racine2);
-				System.out.println("taille frontiere "+frontier.size());
-				System.out.println(racine2.explored.size());
+				if(frontier.size()>tailleMax) {
+					tailleMax=frontier.size();
+				}
+		
 				if(frontier.size()==0) {
 					break;
 				}
@@ -116,15 +119,15 @@ public class Graphe {
 				if(racine2.unexplored.size()==0) {
 					if(racine2.cout+racine2.heuristique<min_tour) {
 						min_tour=racine2.cout+racine2.heuristique;
-						System.out.println("tour minimal: "+min_tour);
 					}
 					for(int h=0;h<frontier.size();h++) {
 						if(racine2.cout+racine2.heuristique>frontier.get(h).cout+frontier.get(h).heuristique) {
 							break;
 						}
 						if(h==frontier.size()-1) {
-							System.out.println(racine2.cout+racine2.heuristique);
+							System.out.println("tailleMax de la fronti√®re: "+tailleMax);
 							return racine2.explored;
+							
 						}
 					}
 				}
@@ -147,8 +150,9 @@ public class Graphe {
 				}
 				
 			}
-			System.out.println(racine2.cout);
+			
 			return racine2.explored;
+		
 	}
 	
 	public int[] prim(ArrayList<Integer> unexplored,int racine){
@@ -176,13 +180,16 @@ public class Graphe {
 				}
 			}
 		}
-		//for(int i=0;i<nbville;i++) {
-		//	System.out.println(pred[i]);
-//		}
-		
+
 		return pred;
 	}
 	
+	/**
+	 * Methode li√© a l'algorithme de prim, ressort 
+	 * @param F
+	 * @param cout
+	 * @return
+	 */
 	public int minF(ArrayList<Integer> F,int[] cout) {
 		int min=0;
 		for(int i=0;i<F.size();i++) {
@@ -330,7 +337,7 @@ public class Graphe {
 	        }
 	     
 	    }
-	    System.out.println("La taux d°Øam®¶lioration = "+(taux*100)+"%");
+	    System.out.println("La taux d'am√©lioration = "+(taux*100)+"%");
 	    return bestDistance;
 	}
 	public void afficherA(int nb,LinkedList<State> a)
