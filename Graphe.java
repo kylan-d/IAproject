@@ -5,6 +5,7 @@ public class Graphe {
 	public int[][] poids;
 	public int nbville;
 	public ArrayList<String> ville;
+	public ArrayList<String> villecopie;
 	LinkedList<State> frontier=new LinkedList<State>();
 	private int eqinf=0;
 	public Graphe() {
@@ -273,19 +274,27 @@ public class Graphe {
 
 
 	public ArrayList<String> swapCities() {
+		
 	    int a = generateRandomIndex();
+	    while(a==0) {
+	    	a = generateRandomIndex();
+	    }
 	    int b = generateRandomIndex();
-	    previousTravel = ville;
-	    ArrayList<String> ville2=(ArrayList<String>) ville.clone();
-	    String x = ville2.get(a);
-	    String y = ville2.get(b);
-	    ville2.set(a, y);
-	    ville2.set(b, x);
-	    return ville2;
+	    while(b==0 || b==a) {
+	    	b = generateRandomIndex();
+	    }
+	   
+	   previousTravel = (ArrayList<String>) villecopie.clone();;
+	    //ArrayList<String> ville2=(ArrayList<String>) previousTravel.clone();
+	    String x = previousTravel.get(a);
+	    String y = previousTravel.get(b);
+	    previousTravel.set(a, y);
+	    previousTravel.set(b, x);
+	    return previousTravel;
 	}
 
 	public void revertSwap() {
-	    ville = previousTravel;
+	    villecopie = (ArrayList<String>) previousTravel.clone();
 	}
 	private int generateRandomIndex() {
 	    return (int) (Math.random() * ville.size());
@@ -307,9 +316,10 @@ public class Graphe {
 	    System.out.println("Starting SA with temperature: " + startingTemperature + ", # of iterations: " + numberOfIterations + " and colling rate: " + coolingRate);
 	    double t = startingTemperature;
 	    //ville.generateInitialTravel();
+	    villecopie=(ArrayList<String>) ville.clone();
 	    double bestDistance = getDistance(ville);
 	    System.out.println("Initial distance of travel: " + bestDistance);
-	 
+	 int nbchange=0;
 	    double taux=0;
 	    for (int i = 0; i < numberOfIterations; i++) {
 	        if (t > 0.1) {
@@ -320,8 +330,11 @@ public class Graphe {
 	            if (currentDistance < bestDistance) {
 	            	taux = (bestDistance-currentDistance)/bestDistance;
 	                bestDistance = currentDistance;
-	            } else if (Math.exp((bestDistance - currentDistance) / t) < Math.random()) {
 	                revertSwap();
+	                nbchange++;
+	            } else if (Math.exp((bestDistance - currentDistance) / t) >= Math.random()) {
+	                revertSwap();
+	                nbchange++;
 	            }
 	            t *= coolingRate;
 	            
@@ -337,6 +350,7 @@ public class Graphe {
 	        }
 	     
 	    }
+	    System.out.println("nb change: "+nbchange);
 	    System.out.println("La taux d'amélioration = "+(taux*100)+"%");
 	    return bestDistance;
 	}

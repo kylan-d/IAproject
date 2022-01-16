@@ -18,13 +18,13 @@ public class Main {
 		if(choix1==1)
 		{
 			System.out.println("*****Simulated Annealing******");
-			double b = G.simulateAnnealing(100,20,0.5);
+			double b = G.simulateAnnealing(100,2000,0.995);
 			System.out.println("Poids totoal après amélioration par Simulated Annealing : "+b);
 		}
 	}
 	if(choix==2) {
 		System.out.println("*****Simulated Annealing******");
-		double b = G.simulateAnnealing(100,20,0.5);
+		double b = G.simulateAnnealing(1000,5000,0.995);
 		System.out.println("Poids totoal après amélioration par Simulated Annealing : "+b);
 		Scanner sc2 = new Scanner(System.in);
 		System.out.println("Vous voulez continuer à faire l'algo A*(Attentions! Cele prends trop de temps à excuter pour plus de 15 villes)? Si oui tapez 1 ");
